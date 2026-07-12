@@ -1,21 +1,16 @@
 """
 Proyecto Aletheia–Voynich
 VIM-1 Corpus Analyzer
-Versión 0.3
+Versión 0.5
 """
 
 from pathlib import Path
 from collections import Counter
 
-CORPUS = Path("ZL3a-n.txt")
-
-print("=" * 60)
-print("VIM-1 Corpus Analyzer v0.3")
-print("=" * 60)
+CORPUS = Path("corpus/ZL3a-n.txt")
 
 if not CORPUS.exists():
-    print("ERROR: No se encontró ZL3a-n.txt")
-    exit()
+    CORPUS = Path("ZL3a-n.txt")
 
 texto = CORPUS.read_text(encoding="utf-8")
 
@@ -31,36 +26,28 @@ for linea in texto.splitlines():
     if linea.startswith("#"):
         continue
 
-    for palabra in linea.split():
-        palabras.append(palabra)
+    palabras.extend(linea.split())
 
-contador = Counter(palabras)
+contador_palabras = Counter(palabras)
 
-print(f"\nTotal de palabras: {len(palabras)}")
-print(f"Palabras distintas: {len(contador)}")
+contador_simbolos = Counter()
 
-print("\nLas 20 palabras más frecuentes:\n")
+for palabra in palabras:
+    for simbolo in palabra:
+        contador_simbolos[simbolo] += 1
 
-for palabra, frecuencia in contador.most_common(20):
+print("=" * 60)
+print("VIM-1 Corpus Analyzer v0.5")
+print("=" * 60)
+
+print(f"Palabras totales : {len(palabras)}")
+print(f"Palabras únicas  : {len(contador_palabras)}")
+print(f"Símbolos únicos  : {len(contador_simbolos)}")
+
+print("\n20 palabras más frecuentes")
+for palabra, frecuencia in contador_palabras.most_common(20):
     print(f"{palabra:20} {frecuencia}")
-# Guardar informe
 
-from pathlib import Path
-
-salida = Path("analysis/report.txt")
-
-with salida.open("w", encoding="utf-8") as f:
-
-    f.write("PROYECTO ALETHEIA-VOYNICH\n")
-    f.write("=========================\n\n")
-
-    f.write(f"Total de palabras: {len(palabras)}\n")
-    f.write(f"Palabras distintas: {len(contador)}\n\n")
-
-    f.write("20 palabras más frecuentes\n")
-    f.write("--------------------------\n")
-
-    for palabra, frecuencia in contador.most_common(20):
-        f.write(f"{palabra:20} {frecuencia}\n")
-
-print("\nInforme guardado correctamente.")
+print("\n20 símbolos más frecuentes")
+for simbolo, frecuencia in contador_simbolos.most_common(20):
+    print(f"{simbolo:3} {frecuencia}")
